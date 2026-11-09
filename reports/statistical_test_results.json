@@ -1,0 +1,120 @@
+{
+  "chi_square_tests": [
+    {
+      "feature": "english_proficiency",
+      "feature_name_vn": "Trình độ Tiếng Anh",
+      "chi2_stat": 18.2874,
+      "p_value": 0.001084265,
+      "dof": 4,
+      "cramers_v": 0.0875,
+      "significance": "Có ý nghĩa thống kê (p < 0.05)"
+    },
+    {
+      "feature": "faculty_consultancy",
+      "feature_name_vn": "Tham vấn Giảng viên cố vấn",
+      "chi2_stat": 1.6192,
+      "p_value": 0.4450278,
+      "dof": 2,
+      "cramers_v": 0.0368,
+      "significance": "Không có ý nghĩa thống kê (p >= 0.05)"
+    },
+    {
+      "feature": "scholarship",
+      "feature_name_vn": "Học bổng Khuyến khích",
+      "chi2_stat": 49.9698,
+      "p_value": 1.409898e-11,
+      "dof": 2,
+      "cramers_v": 0.2046,
+      "significance": "Có ý nghĩa thống kê (p < 0.05)"
+    },
+    {
+      "feature": "living_with",
+      "feature_name_vn": "Nơi ở (Gia đình vs Ở trọ)",
+      "chi2_stat": 3.0495,
+      "p_value": 0.2176754,
+      "dof": 2,
+      "cramers_v": 0.0505,
+      "significance": "Không có ý nghĩa thống kê (p >= 0.05)"
+    },
+    {
+      "feature": "learning_mode",
+      "feature_name_vn": "Phương thức Học tập (Offline/Online)",
+      "chi2_stat": 2.0402,
+      "p_value": 0.3605574,
+      "dof": 2,
+      "cramers_v": 0.0413,
+      "significance": "Không có ý nghĩa thống kê (p >= 0.05)"
+    },
+    {
+      "feature": "health_issues",
+      "feature_name_vn": "Vấn đề Sức khỏe",
+      "chi2_stat": 0.1977,
+      "p_value": 0.9058794,
+      "dof": 2,
+      "cramers_v": 0.0129,
+      "significance": "Không có ý nghĩa thống kê (p >= 0.05)"
+    },
+    {
+      "feature": "extracurricular",
+      "feature_name_vn": "Hoạt động Ngoại khóa",
+      "chi2_stat": 10.826,
+      "p_value": 0.004458268,
+      "dof": 2,
+      "cramers_v": 0.0952,
+      "significance": "Có ý nghĩa thống kê (p < 0.05)"
+    }
+  ],
+  "anova_kruskal_tests": [
+    {
+      "comparison": "CGPA across English Proficiency Levels (Basic, Intermediate, Advance)",
+      "f_stat": 7.0266,
+      "f_p_value": 0.0009252601,
+      "kruskal_stat": 12.8984,
+      "kruskal_p_value": 0.001581762,
+      "interpretation": "Khác biệt cực kỳ có ý nghĩa thống kê về CGPA giữa các nhóm trình độ tiếng Anh."
+    },
+    {
+      "comparison": "CGPA across Learning Modes (Offline vs Online)",
+      "f_stat": 0.4306,
+      "f_p_value": 0.5118287,
+      "kruskal_stat": 5.7916,
+      "kruskal_p_value": 0.01610281,
+      "interpretation": "Không có sự khác biệt đáng kể giữa Online và Offline."
+    },
+    {
+      "comparison": "Attendance Percentage across Student Status groups",
+      "f_stat": 28.4193,
+      "f_p_value": 8.772354e-13,
+      "kruskal_stat": 42.7293,
+      "kruskal_p_value": 5.265735e-10,
+      "interpretation": "Mức độ chuyên cần khác biệt cực kỳ rõ rệt giữa sinh viên Giỏi, TB và Nguy cơ."
+    },
+    {
+      "comparison": "Social Media Hours across Student Status",
+      "f_stat": 4.627,
+      "f_p_value": 0.009960562,
+      "kruskal_stat": 7.4646,
+      "kruskal_p_value": 0.02393778,
+      "interpretation": "Thời gian dùng mạng xã hội có sự khác biệt có ý nghĩa thống kê giữa các nhóm trạng thái."
+    }
+  ],
+  "t_tests": [
+    {
+      "comparison": "CGPA of Students Consulting Faculty (Yes) vs Not Consulting (No)",
+      "mean_yes": 3.122,
+      "mean_no": 3.219,
+      "t_stat": -2.2452,
+      "t_p_value": 0.02493566,
+      "mann_whitney_p": 0.08456928,
+      "interpretation": "Sinh viên có gặp cố vấn có điểm CGPA TB (3.12) vượt trội so với nhóm không gặp (3.22), p=2.494e-02."
+    },
+    {
+      "comparison": "CGPA of Students with Scholarship (Yes) vs without Scholarship (No)",
+      "mean_yes": 3.205,
+      "mean_no": 3.135,
+      "t_stat": 1.5437,
+      "t_p_value": 0.123027,
+      "interpretation": "Sinh viên nhận học bổng có CGPA (3.21) cao hơn đáng kể so với nhóm không có học bổng (3.13), p=1.230e-01."
+    }
+  ]
+}
