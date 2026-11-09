@@ -1,0 +1,22 @@
+=== THỐNG KÊ MÔ TẢ CÁC BIẾN SỐ LƯỢNG ===
+Số lượng quan sát: 1194 sinh viên
+
+                       Trung bình  Độ lệch chuẩn  Trung vị  Min    Max
+current_cgpa                 3.17           0.75      3.21  0.0    4.0
+previous_sgpa                2.68           0.87      2.68  0.0    4.0
+attendance_percentage       88.26          15.31     93.50  0.0  100.0
+daily_study_hours            3.13           1.65      3.00  0.0   13.0
+social_media_hours           3.29           2.29      3.00  0.0   20.0
+credits_completed           71.84          48.07     78.00  0.0  145.0
+study_to_social_ratio        1.34           1.48      0.97  0.0   30.0
+study_effort_index           6.60           5.45      6.00  0.0   56.0
+
+=== SKEWNESS (ĐỘ LỆCH) ===
+  current_cgpa                  : skew = -2.502 (phân phối lệch trái)
+  previous_sgpa                 : skew = -0.858 (phân phối lệch trái)
+  attendance_percentage         : skew = -2.113 (phân phối lệch trái)
+  daily_study_hours             : skew = +1.005 (phân phối lệch phải)
+  social_media_hours            : skew = +1.993 (phân phối lệch phải)
+  credits_completed             : skew = -0.020 (xấp xỉ chuẩn)
+  study_to_social_ratio         : skew = +8.712 (phân phối lệch phải)
+  study_effort_index            : skew = +2.054 (phân phối lệch phải)

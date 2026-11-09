@@ -22,12 +22,44 @@ def run_statistical_tests():
     df = pd.read_csv(data_path)
 
     results = {
+        "normality_tests": [],
         "chi_square_tests": [],
         "anova_kruskal_tests": [],
         "t_tests": []
     }
 
-    print("\n[2/4] Running Chi-Square Tests of Independence...")
+    print("\n[2/5] Running Normality Tests (Shapiro-Wilk)...")
+    # Dùng sample 50 vì Shapiro-Wilk chính xác nhất với n <= 5000
+    # và lý do chọn Kruskal-Wallis/Mann-Whitney làm backup test
+    norm_vars = [
+        ("current_cgpa",          "Điểm Tích lũy CGPA"),
+        ("previous_sgpa",         "Điểm Học kỳ trước SGPA"),
+        ("attendance_percentage", "Tỷ lệ Chuyên cần (%)"),
+        ("daily_study_hours",     "Giờ Tự học mỗi ngày"),
+        ("social_media_hours",    "Giờ Dùng Mạng xã hội"),
+    ]
+    print(f"  {'Biến':32s} | W-stat  | p-value  | Kết luận")
+    print("  " + "-" * 72)
+    for col, name in norm_vars:
+        sample = df[col].dropna()
+        # Shapiro-Wilk giới hạn n <= 5000; lấy sample nếu cần
+        if len(sample) > 5000:
+            sample = sample.sample(5000, random_state=42)
+        w_stat, sw_p = stats.shapiro(sample)
+        normal = sw_p >= 0.05
+        conclusion = "Phân phối chuẩn (p>=0.05)" if normal else "KHÔNG chuẩn (p<0.05) → dùng non-parametric"
+        results["normality_tests"].append({
+            "variable": col,
+            "variable_name_vn": name,
+            "shapiro_w": round(float(w_stat), 4),
+            "p_value": float(f"{sw_p:.6e}"),
+            "is_normal": bool(normal),
+            "conclusion": conclusion
+        })
+        print(f"  {name:32s} | W={w_stat:.4f} | p={sw_p:.3e} | {conclusion}")
+    print("  → Kết luận: Hầu hết biến KHÔNG có phân phối chuẩn ⟹ Dùng Kruskal-Wallis & Mann-Whitney là chính xác!")
+
+    print("\n[3/5] Running Chi-Square Tests of Independence...")
     cat_pairs = [
         ("english_proficiency", "Trình độ Tiếng Anh"),
         ("faculty_consultancy", "Tham vấn Giảng viên cố vấn"),
@@ -56,7 +88,7 @@ def run_statistical_tests():
         results["chi_square_tests"].append(res_item)
         print(f"  * {name:35s} | Chi2={chi2:8.2f} | p={p:.3e} | Cramer's V={cramer_v:.3f} | {sig}")
 
-    print("\n[3/4] Running ANOVA & Kruskal-Wallis Tests...")
+    print("\n[4/5] Running ANOVA & Kruskal-Wallis Tests...")
     # 1. CGPA across English proficiency levels
     eng_groups = [group['current_cgpa'].values for _, group in df.groupby('english_proficiency')]
     f_val, p_val = stats.f_oneway(*eng_groups)
@@ -113,7 +145,7 @@ def run_statistical_tests():
     })
     print(f"  * Social Media across Status: F={f_val4:.2f} (p={p_val4:.3e}), KW={kw_val4:.2f} (p={kw_p4:.3e})")
 
-    print("\n[4/4] Running Two-sample T-Tests & Mann-Whitney U Tests...")
+    print("\n[5/5] Running Two-sample T-Tests & Mann-Whitney U Tests...")
     # Faculty consultancy: CGPA of Yes vs No
     yes_fc = df[df['faculty_consultancy'] == 'Yes']['current_cgpa']
     no_fc = df[df['faculty_consultancy'] == 'No']['current_cgpa']

@@ -21,13 +21,67 @@ def generate_visualizations():
     fig_dir = os.path.join("reports", "figures")
     os.makedirs(fig_dir, exist_ok=True)
     
-    print("[1/10] Loading processed dataset...")
+    print("[1/12] Loading processed dataset...")
     df = pd.read_csv(data_path)
+
+    # ----------------------------------------------------
+    # BIỂU ĐỒ 0a: Phân phối Điểm Tích lũy (CGPA) - Histogram + KDE
+    # ----------------------------------------------------
+    print("[2/12] Generating Figure 0a: CGPA Distribution Histogram...")
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5), dpi=300)
+
+    # CGPA histogram
+    sns.histplot(df['current_cgpa'], bins=30, kde=True, color='#3498db', ax=axes[0], edgecolor='white')
+    axes[0].axvline(df['current_cgpa'].mean(), color='red', linestyle='--', linewidth=2,
+                    label=f"Trung bình: {df['current_cgpa'].mean():.2f}")
+    axes[0].axvline(df['current_cgpa'].median(), color='orange', linestyle=':', linewidth=2,
+                    label=f"Trung vị: {df['current_cgpa'].median():.2f}")
+    axes[0].set_title("Phân phối Điểm Tích lũy CGPA (n=1194 sinh viên)", fontsize=12, fontweight='bold')
+    axes[0].set_xlabel("Điểm Tích lũy (CGPA thang 4.0)", fontsize=11)
+    axes[0].set_ylabel("Số lượng Sinh viên", fontsize=11)
+    axes[0].legend(fontsize=10)
+
+    # Daily study hours histogram
+    sns.histplot(df['daily_study_hours'], bins=14, kde=True, color='#2ecc71', ax=axes[1], edgecolor='white')
+    axes[1].axvline(df['daily_study_hours'].mean(), color='red', linestyle='--', linewidth=2,
+                    label=f"Trung bình: {df['daily_study_hours'].mean():.2f} giờ")
+    axes[1].set_title("Phân phối Giờ Tự học mỗi ngày (Daily Study Hours)", fontsize=12, fontweight='bold')
+    axes[1].set_xlabel("Số giờ tự học mỗi ngày", fontsize=11)
+    axes[1].set_ylabel("Số lượng Sinh viên", fontsize=11)
+    axes[1].legend(fontsize=10)
+
+    plt.suptitle("Phân phối Univariate của 2 Biến Cốt lõi: CGPA & Giờ Tự học", fontsize=13, fontweight='bold', y=1.02)
+    plt.tight_layout()
+    f0_path = os.path.join(fig_dir, "00_cgpa_studyhours_distribution.png")
+    plt.savefig(f0_path, dpi=300, bbox_inches='tight')
+    plt.close()
+
+    # ----------------------------------------------------
+    # BIỂU ĐỒ 0b: Thống kê Mô tả Tổng quan (Descriptive Stats)
+    # ----------------------------------------------------
+    print("[3/12] Generating Figure 0b: Descriptive Statistics Summary...")
+    num_cols = ['current_cgpa', 'previous_sgpa', 'attendance_percentage',
+                'daily_study_hours', 'social_media_hours', 'credits_completed',
+                'study_to_social_ratio', 'study_effort_index']
+    desc = df[num_cols].describe().T[['mean', 'std', '50%', 'min', 'max']]
+    desc.columns = ['Trung bình', 'Độ lệch chuẩn', 'Trung vị', 'Min', 'Max']
+    desc = desc.round(2)
+    # Save as a formatted text report (not a figure)
+    desc_path = os.path.join("reports", "descriptive_statistics.txt")
+    with open(desc_path, "w", encoding="utf-8") as f_desc:
+        f_desc.write("=== THỐNG KÊ MÔ TẢ CÁC BIẾN SỐ LƯỢNG ===\n")
+        f_desc.write(f"Số lượng quan sát: {len(df)} sinh viên\n\n")
+        f_desc.write(desc.to_string())
+        f_desc.write("\n\n=== SKEWNESS (ĐỘ LỆCH) ===\n")
+        for col in num_cols:
+            skew = df[col].skew()
+            skew_note = "phân phối lệch phải" if skew > 0.5 else ("phân phối lệch trái" if skew < -0.5 else "xấp xỉ chuẩn")
+            f_desc.write(f"  {col:30s}: skew = {skew:+.3f} ({skew_note})\n")
 
     # ----------------------------------------------------
     # BIỂU ĐỒ 1: Tương quan Giờ học & Mạng xã hội theo Trạng thái học tập
     # ----------------------------------------------------
-    print("[2/10] Generating Figure 1: Study vs Social Media Scatter Plot...")
+    print("[4/12] Generating Figure 1: Study vs Social Media Scatter Plot...")
     plt.figure(figsize=(9, 6), dpi=300)
     sns.scatterplot(
         data=df,
@@ -61,14 +115,16 @@ def generate_visualizations():
     # ----------------------------------------------------
     # BIỂU ĐỒ 2: Tác động của Chuyên cần (Attendance Percentage)
     # ----------------------------------------------------
-    print("[3/10] Generating Figure 2: Attendance Violin & Box Plot...")
+    print("[5/12] Generating Figure 2: Attendance Violin & Box Plot...")
     plt.figure(figsize=(9, 6), dpi=300)
     sns.violinplot(
         data=df,
         x="student_status",
         y="attendance_percentage",
+        hue="student_status",
         order=["Good Standing", "Average Standing", "Academic Risk"],
         palette=palette_status,
+        legend=False,
         inner="quartile",
         cut=0,
         linewidth=1.5
@@ -87,15 +143,17 @@ def generate_visualizations():
     # ----------------------------------------------------
     # BIỂU ĐỒ 3: Trình độ Tiếng Anh vs Điểm CGPA
     # ----------------------------------------------------
-    print("[4/10] Generating Figure 3: English Skills vs CGPA...")
+    print("[6/12] Generating Figure 3: English Skills vs CGPA...")
     plt.figure(figsize=(8, 6), dpi=300)
     order_eng = ["Basic", "Intermediate", "Advance"]
     sns.boxplot(
         data=df,
         x="english_proficiency",
         y="current_cgpa",
+        hue="english_proficiency",
         order=order_eng,
         palette=["#e67e22", "#3498db", "#2ecc71"],
+        legend=False,
         boxprops=dict(alpha=0.75),
         showmeans=True,
         meanprops={"marker": "D", "markerfacecolor": "red", "markeredgecolor": "red", "markersize": "7"}
@@ -111,7 +169,7 @@ def generate_visualizations():
     # ----------------------------------------------------
     # BIỂU ĐỒ 4: Yếu tố Rủi ro Học vụ (Probation & Suspension)
     # ----------------------------------------------------
-    print("[5/10] Generating Figure 4: Academic Risk Stacked Bar Chart...")
+    print("[7/12] Generating Figure 4: Academic Risk Stacked Bar Chart...")
     prob_ct = pd.crosstab(df['probation'], df['student_status'], normalize='index') * 100
     prob_ct = prob_ct[['Good Standing', 'Average Standing', 'Academic Risk']]
     
@@ -137,7 +195,7 @@ def generate_visualizations():
     # ----------------------------------------------------
     # BIỂU ĐỒ 5: Môi trường sống, Sức khỏe & Giờ tự học
     # ----------------------------------------------------
-    print("[6/10] Generating Figure 5: Living Status & Health vs Study Hours...")
+    print("[8/12] Generating Figure 5: Living Status & Health vs Study Hours...")
     plt.figure(figsize=(9, 5), dpi=300)
     sns.barplot(
         data=df,
@@ -160,7 +218,7 @@ def generate_visualizations():
     # ----------------------------------------------------
     # BIỂU ĐỒ 6: Hiệu quả của Tư vấn từ Giảng viên (Faculty Consultancy)
     # ----------------------------------------------------
-    print("[7/10] Generating Figure 6: Faculty Consultancy KDE Plot...")
+    print("[9/12] Generating Figure 6: Faculty Consultancy KDE Plot...")
     plt.figure(figsize=(9, 5.5), dpi=300)
     sns.kdeplot(
         data=df[df['faculty_consultancy'] == 'Yes'],
@@ -194,7 +252,7 @@ def generate_visualizations():
     # ----------------------------------------------------
     # BIỂU ĐỒ 7: Phân phối Biến Mục Tiêu (Target Class Distribution)
     # ----------------------------------------------------
-    print("[8/10] Generating Figure 7: Target Status Distribution...")
+    print("[10/12] Generating Figure 7: Target Status Distribution...")
     plt.figure(figsize=(7, 5), dpi=300)
     status_order = ["Good Standing", "Average Standing", "Academic Risk"]
     counts = df['student_status'].value_counts()[status_order]
@@ -215,7 +273,7 @@ def generate_visualizations():
     # ----------------------------------------------------
     # BIỂU ĐỒ 8: Ma trận Tương quan (Correlation Heatmap)
     # ----------------------------------------------------
-    print("[9/10] Generating Figure 8: Correlation Matrix Heatmap...")
+    print("[11/12] Generating Figure 8: Correlation Matrix Heatmap...")
     corr_cols = [
         "current_cgpa", "previous_sgpa", "attendance_percentage",
         "daily_study_hours", "social_media_hours", "study_to_social_ratio",
@@ -254,13 +312,15 @@ def generate_visualizations():
     # ----------------------------------------------------
     # BIỂU ĐỒ 9: Phân tích Kỹ năng IT hàng đầu (Top CSE Skills)
     # ----------------------------------------------------
-    print("[10/10] Generating Figure 9: Top CSE Skills Distribution...")
+    print("[12/12] Generating Figure 9: Top CSE Skills Distribution...")
     plt.figure(figsize=(9, 5), dpi=300)
     top_skills = df['skills'].value_counts().head(7)
     sns.barplot(
         x=top_skills.values,
         y=top_skills.index,
+        hue=top_skills.index,
         palette="viridis",
+        legend=False,
         edgecolor='w'
     )
     for i, v in enumerate(top_skills.values):
@@ -274,7 +334,9 @@ def generate_visualizations():
     plt.savefig(f9_path, dpi=300)
     plt.close()
 
-    print(f"\nAll 9 professional figures successfully generated in: {fig_dir}")
+    print(f"\nAll 11 professional figures successfully generated in: {fig_dir}")
+    print(f"  + 00_cgpa_studyhours_distribution.png (Histogram CGPA & Study Hours)")
+    print(f"  Descriptive stats saved to: reports/descriptive_statistics.txt")
 
 if __name__ == "__main__":
     generate_visualizations()

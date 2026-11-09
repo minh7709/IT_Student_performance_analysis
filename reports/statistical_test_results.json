@@ -1,4 +1,46 @@
 {
+  "normality_tests": [
+    {
+      "variable": "current_cgpa",
+      "variable_name_vn": "Điểm Tích lũy CGPA",
+      "shapiro_w": 0.7497,
+      "p_value": 4.235501e-39,
+      "is_normal": false,
+      "conclusion": "KHÔNG chuẩn (p<0.05) → dùng non-parametric"
+    },
+    {
+      "variable": "previous_sgpa",
+      "variable_name_vn": "Điểm Học kỳ trước SGPA",
+      "shapiro_w": 0.935,
+      "p_value": 2.142327e-22,
+      "is_normal": false,
+      "conclusion": "KHÔNG chuẩn (p<0.05) → dùng non-parametric"
+    },
+    {
+      "variable": "attendance_percentage",
+      "variable_name_vn": "Tỷ lệ Chuyên cần (%)",
+      "shapiro_w": 0.7551,
+      "p_value": 8.641471e-39,
+      "is_normal": false,
+      "conclusion": "KHÔNG chuẩn (p<0.05) → dùng non-parametric"
+    },
+    {
+      "variable": "daily_study_hours",
+      "variable_name_vn": "Giờ Tự học mỗi ngày",
+      "shapiro_w": 0.914,
+      "p_value": 1.844895e-25,
+      "is_normal": false,
+      "conclusion": "KHÔNG chuẩn (p<0.05) → dùng non-parametric"
+    },
+    {
+      "variable": "social_media_hours",
+      "variable_name_vn": "Giờ Dùng Mạng xã hội",
+      "shapiro_w": 0.8056,
+      "p_value": 1.341892e-35,
+      "is_normal": false,
+      "conclusion": "KHÔNG chuẩn (p<0.05) → dùng non-parametric"
+    }
+  ],
   "chi_square_tests": [
     {
       "feature": "english_proficiency",

@@ -1,4 +1,6 @@
 {
+  "best_model_selected": "Gradient Boosting",
+  "best_model_cv_f1_weighted": 0.6751,
   "cross_validation_results": {
     "Logistic Regression": {
       "accuracy_mean": 0.629,
@@ -26,38 +28,39 @@
     }
   },
   "test_set_evaluation": {
-    "accuracy": 0.6485,
-    "f1_macro": 0.6437,
+    "model": "Gradient Boosting",
+    "accuracy": 0.6862,
+    "f1_macro": 0.6798,
     "classification_report": {
       "Academic Risk": {
-        "precision": 0.625,
-        "recall": 0.49295774647887325,
-        "f1-score": 0.5511811023622047,
+        "precision": 0.6101694915254238,
+        "recall": 0.5070422535211268,
+        "f1-score": 0.5538461538461539,
         "support": 71.0
       },
       "Average Standing": {
-        "precision": 0.5950413223140496,
-        "recall": 0.75,
-        "f1-score": 0.663594470046083,
+        "precision": 0.6666666666666666,
+        "recall": 0.7291666666666666,
+        "f1-score": 0.6965174129353234,
         "support": 96.0
       },
       "Good Standing": {
-        "precision": 0.7741935483870968,
-        "recall": 0.6666666666666666,
-        "f1-score": 0.7164179104477612,
+        "precision": 0.7733333333333333,
+        "recall": 0.8055555555555556,
+        "f1-score": 0.7891156462585034,
         "support": 72.0
       },
-      "accuracy": 0.6485355648535565,
+      "accuracy": 0.6861924686192469,
       "macro avg": {
-        "precision": 0.6647449569003822,
-        "recall": 0.6365414710485133,
-        "f1-score": 0.6437311609520163,
+        "precision": 0.6833898305084746,
+        "recall": 0.6805881585811164,
+        "f1-score": 0.6798264043466603,
         "support": 239.0
       },
       "weighted avg": {
-        "precision": 0.6579117256318818,
-        "recall": 0.6485355648535565,
-        "f1-score": 0.6461130416082816,
+        "precision": 0.6820168782355861,
+        "recall": 0.6861924686192469,
+        "f1-score": 0.6820296029099591,
         "support": 239.0
       }
     }
@@ -66,62 +69,62 @@
     {
       "Feature": "previous_sgpa",
       "Feature_VN": "Điểm Học kỳ trước (SGPA)",
-      "Importance": 0.28284243575400464
-    },
-    {
-      "Feature": "credits_completed",
-      "Feature_VN": "Số Tín chỉ đã Hoàn thành",
-      "Importance": 0.08575819856218234
+      "Importance": 0.4723624240396755
     },
     {
       "Feature": "monthly_income",
       "Feature_VN": "Thu nhập Gia đình mỗi tháng",
-      "Importance": 0.06591592223136591
+      "Importance": 0.08397927396380307
+    },
+    {
+      "Feature": "credits_completed",
+      "Feature_VN": "Số Tín chỉ đã Hoàn thành",
+      "Importance": 0.07654447414023044
     },
     {
       "Feature": "current_semester",
       "Feature_VN": "Học kỳ Hiện tại",
-      "Importance": 0.06439629028809515
+      "Importance": 0.06621361828203826
     },
     {
       "Feature": "attendance_percentage",
       "Feature_VN": "Tỷ lệ Chuyên cần (%)",
-      "Importance": 0.05684789564383324
+      "Importance": 0.05555918589763174
     },
     {
       "Feature": "study_to_social_ratio",
       "Feature_VN": "Tỷ lệ Học / Dùng MXH",
-      "Importance": 0.041020656089969375
-    },
-    {
-      "Feature": "study_effort_index",
-      "Feature_VN": "Chỉ số Nỗ lực Học tập",
-      "Importance": 0.038619466405341335
-    },
-    {
-      "Feature": "social_media_hours",
-      "Feature_VN": "Thời gian Dùng MXH mỗi ngày",
-      "Importance": 0.03689890046556234
+      "Importance": 0.0323662546349869
     },
     {
       "Feature": "age",
       "Feature_VN": "Độ tuổi Sinh viên",
-      "Importance": 0.035110358418032464
+      "Importance": 0.03212218262142319
     },
     {
-      "Feature": "daily_study_hours",
-      "Feature_VN": "Thời gian Tự học mỗi ngày",
-      "Importance": 0.028851026072692375
+      "Feature": "social_media_hours",
+      "Feature_VN": "Thời gian Dùng MXH mỗi ngày",
+      "Importance": 0.030630498350269382
+    },
+    {
+      "Feature": "study_effort_index",
+      "Feature_VN": "Chỉ số Nỗ lực Học tập",
+      "Importance": 0.024529214374391088
     },
     {
       "Feature": "gap_year",
       "Feature_VN": "Số năm Gián đoạn trước ĐH",
-      "Importance": 0.025089666901960222
+      "Importance": 0.013305912778878885
     },
     {
       "Feature": "study_frequency",
       "Feature_VN": "Số lần Ngồi vào bàn học",
-      "Importance": 0.01740068689602798
+      "Importance": 0.011708646913213775
+    },
+    {
+      "Feature": "daily_study_hours",
+      "Feature_VN": "Thời gian Tự học mỗi ngày",
+      "Importance": 0.010313576449581334
     }
   ]
 }

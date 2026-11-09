@@ -96,13 +96,18 @@ def train_and_evaluate_models():
         }
         print(f"  * {name:20s}: Accuracy={cv_results[name]['accuracy_mean']:.3f} (+/- {cv_results[name]['accuracy_std']:.3f}) | F1-Macro={cv_results[name]['f1_macro_mean']:.3f}")
 
+    # ---- AUTO-SELECT best model by F1-Weighted (CV) ----
+    best_name = max(cv_results, key=lambda k: cv_results[k]['f1_weighted_mean'])
+    print(f"\n  >>> Best model (by F1-Weighted CV): [{best_name}]")
+    print(f"      F1-Weighted = {cv_results[best_name]['f1_weighted_mean']:.4f} | Accuracy = {cv_results[best_name]['accuracy_mean']:.4f}")
+
     # Train / Test split for detailed diagnostics & confusion matrix
-    print("\n[3/6] Fitting Best Model (Random Forest) on Train/Test Split (80/20)...")
+    print(f"\n[3/6] Fitting Best Model [{best_name}] on Train/Test Split (80/20)...")
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
-    
-    rf_pipe = Pipeline(steps=[('prep', preprocessor), ('clf', models["Random Forest"])])
-    rf_pipe.fit(X_train, y_train)
-    y_pred = rf_pipe.predict(X_test)
+
+    best_pipe = Pipeline(steps=[('prep', preprocessor), ('clf', models[best_name])])
+    best_pipe.fit(X_train, y_train)
+    y_pred = best_pipe.predict(X_test)
 
     acc_test = accuracy_score(y_test, y_pred)
     f1_macro_test = f1_score(y_test, y_pred, average='macro')
@@ -129,7 +134,7 @@ def train_and_evaluate_models():
         cbar=True,
         linewidths=1
     )
-    plt.title(f"Ma trận Nhầm lẫn (Confusion Matrix) - Random Forest (Độ chính xác: {acc_test:.1%})", fontsize=12, fontweight='bold', pad=12)
+    plt.title(f"Ma trận Nhầm lẫn (Confusion Matrix) - {best_name} (Độ chính xác: {acc_test:.1%})", fontsize=12, fontweight='bold', pad=12)
     plt.xlabel("Trạng thái Dự đoán (Predicted)", fontsize=11)
     plt.ylabel("Trạng thái Thực tế (True)", fontsize=11)
     plt.tight_layout()
@@ -142,12 +147,19 @@ def train_and_evaluate_models():
     # ----------------------------------------------------
     print("[5/6] Extracting Feature Importance & Generating Figure 11...")
     # Get encoded feature names
-    cat_encoder = rf_pipe.named_steps['prep'].named_transformers_['cat']
+    cat_encoder = best_pipe.named_steps['prep'].named_transformers_['cat']
     encoded_cat_names = cat_encoder.get_feature_names_out(cat_features).tolist()
     all_feature_names = num_features + encoded_cat_names
 
-    rf_model = rf_pipe.named_steps['clf']
-    importances = rf_model.feature_importances_
+    best_model = best_pipe.named_steps['clf']
+
+    # Tree-based models → feature_importances_; Logistic Regression → |coef_|
+    if hasattr(best_model, 'feature_importances_'):
+        importances = best_model.feature_importances_
+        importance_label = "Mức độ Quan trọng Tương đối (Gini Importance)"
+    else:
+        importances = np.abs(best_model.coef_).mean(axis=0)
+        importance_label = "Mức độ Quan trọng Tương đối (|Coef| trung bình)"
 
     fi_df = pd.DataFrame({
         "Feature": all_feature_names,
@@ -180,13 +192,15 @@ def train_and_evaluate_models():
         data=top_12,
         x="Importance",
         y="Feature_VN",
+        hue="Feature_VN",
         palette="crest",
+        legend=False,
         edgecolor='w'
     )
     for i, v in enumerate(top_12['Importance'].values):
         plt.text(v + 0.002, i, f"{v:.3f} ({v*100:.1f}%)", va='center', fontweight='bold', fontsize=9.5)
-    plt.title("Top 12 Đặc trưng Tác động Lớn nhất đến Trạng thái Học tập (Random Forest)", fontsize=13, fontweight='bold', pad=12)
-    plt.xlabel("Mức độ Quan trọng Tương đối (Relative Importance)", fontsize=11)
+    plt.title(f"Top 12 Đặc trưng Tác động Lớn nhất đến Trạng thái Học tập ({best_name})", fontsize=13, fontweight='bold', pad=12)
+    plt.xlabel(importance_label, fontsize=11)
     plt.ylabel("Đặc trưng (Feature)", fontsize=11)
     plt.xlim(0, max(top_12['Importance']) * 1.18)
     plt.tight_layout()
@@ -199,8 +213,11 @@ def train_and_evaluate_models():
     # ----------------------------------------------------
     print("[6/6] Saving ML experiment artifacts...")
     final_output = {
+        "best_model_selected": best_name,
+        "best_model_cv_f1_weighted": cv_results[best_name]['f1_weighted_mean'],
         "cross_validation_results": cv_results,
         "test_set_evaluation": {
+            "model": best_name,
             "accuracy": round(float(acc_test), 4),
             "f1_macro": round(float(f1_macro_test), 4),
             "classification_report": cls_report
@@ -212,6 +229,7 @@ def train_and_evaluate_models():
         json.dump(final_output, f, ensure_ascii=False, indent=2)
 
     print(f"\nModel training and evaluation successfully finished! Results in: {out_json}")
+    print(f"  Best model auto-selected: [{best_name}] | F1-Weighted={cv_results[best_name]['f1_weighted_mean']:.4f} | Test Acc={acc_test:.4f}")
     return final_output
 
 if __name__ == "__main__":
